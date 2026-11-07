@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="referrer" content="no-referrer">
+  <meta name="robots" content="noindex">
+  <title>Retornando ao sistema…</title>
+  <style>
+    body { font-family: 'Segoe UI', system-ui, sans-serif; background: #f4f6f8; color: #1f2933; margin: 0; padding: 40px 16px; }
+    .caixa { max-width: 560px; margin: 0 auto; background: #fff; border: 1px solid #dde3ea; border-radius: 12px; padding: 24px; }
+    h1 { font-size: 20px; margin: 0 0 12px; }
+    input { width: 100%; box-sizing: border-box; padding: 8px; font: inherit; border: 1px solid #dde3ea; border-radius: 6px; }
+    .dica { color: #616e7c; font-size: 13px; }
+  </style>
+</head>
+<body>
+  <div class="caixa">
+    <h1 id="titulo">Voltando para o sistema de precificação…</h1>
+    <p id="texto" class="dica">Esta página só repassa a autorização do Mercado Livre para o sistema que roda no seu computador (localhost). Nada é guardado aqui.</p>
+    <div id="manual" hidden>
+      <p>Se o sistema não abriu sozinho, verifique se ele está ligado e copie o endereço abaixo para a janelinha "Conectar Mercado Livre":</p>
+      <input id="endereco" readonly onclick="this.select()">
+    </div>
+  </div>
+  <script>
+    (function () {
+      var PORTA = 3210; // porta padrão do sistema local
+      var q = window.location.search || '';
+      var params = new URLSearchParams(q);
+      if (!params.get('code') && !params.get('error')) {
+        document.getElementById('titulo').textContent = 'Página de retorno do sistema de precificação';
+        return;
+      }
+      var destino = 'http://localhost:' + PORTA + '/callback/ml' + q;
+      document.getElementById('endereco').value = window.location.href;
+      // Remove o código do histórico desta página antes de sair
+      try { history.replaceState(null, '', window.location.pathname); } catch (e) {}
+      setTimeout(function () { document.getElementById('manual').hidden = false; }, 4000);
+      window.location.replace(destino);
+    })();
+  </script>
+</body>
+</html>
